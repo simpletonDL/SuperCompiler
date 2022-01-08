@@ -1,0 +1,68 @@
+module HLL.Semantic where
+
+--import Lang
+--import Control.Monad.Trans.State.Lazy
+--  
+--nextName :: State Int String
+--nextName = do {
+--  i <- get;
+--  put $ i + 1;
+--  return $ ("x" ++ show i)
+--}
+--
+--
+---- Подстановка
+---- [x -> term] e
+--substitution :: String -> Expr -> Expr -> Expr
+--substitution x term e = evalState (substitutionHelper x term e) 0
+--
+--substitutionHelper :: String -> Expr -> Expr -> State Int Expr
+--substitutionHelper x term e@(Var y) = return $ if x == y then term else e
+--substitutionHelper x term (e1 :@ e2) = do {
+--  left <- substitutionHelper x term e1;
+--  right <- substitutionHelper x term e2;
+--  return $ left :@ right
+--}
+--
+--substitutionHelper x term e@(Lam y body) =
+--  if x == y then return e 
+--  else
+--    if elem y $ freeVars term then do {
+--      z <- nextName;
+--      body' <- substitutionHelper y (Var z) body;
+--      body'' <- substitutionHelper x term body';
+--      return $ Lam z body''
+--    }
+--    else do {
+--      newBody <- substitutionHelper x term body;
+--      return $ Lam y newBody
+--    }
+--
+--substitutionHelper x term (Constr c args) = do {
+--  newArgs <- sequence $ map (substitutionHelper x term) args;
+--  return $ Constr c newArgs
+--}
+--substitutionHelper _ _ e@(Func _) = return e
+--
+--substitutionHelper x term (Case e clauses) = do {
+--  e' <- substitutionHelper x term e;
+--  cases' <- sequence $ map (substitutionCaseClause x term) clauses;
+--  return $ Case e' cases'
+--}
+--
+--substitutionCaseClause :: String -> Expr -> (Pattern, Expr) -> State Int (Pattern, Expr)
+--substitutionCaseClause x term ((Pattern c vars), e) = do {
+--    (newVars, body) <- rename vars ([], e);
+--    body' <- substitutionHelper x term body;
+--    return $ (Pattern c $ reverse newVars, body')
+--  }
+--  where
+--    rename :: [String] -> ([String], Expr) -> State Int ([String], Expr)
+--    rename [] acc = return acc
+--    rename (y:ys) (accVars, body) = 
+--      if elem y $ freeVars term then do {
+--        z <- nextName;
+--        body' <- substitutionHelper y (Var z) body;
+--        rename ys (z : accVars, body')
+--      }
+--      else rename ys (y : accVars, body)

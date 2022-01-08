@@ -1,0 +1,48 @@
+module HLL.Lang where
+
+--import Data.List
+--import Utils
+--import Control.Monad.Trans.State.Lazy
+--
+--infixl 3 :@
+--
+--data Pattern =
+--  Pattern String [String]
+--  deriving Eq
+--
+--data Expr =
+--    Var String
+--  | Expr :@ Expr
+--  | Lam String Expr
+--  | Func String
+--  | Constr String [Expr]
+--  | Case Expr [(Pattern, Expr)]
+--  deriving Eq
+--
+---- Свободные переменные
+--freeVars :: Expr -> [String]
+--freeVars = helper [] where
+--    helper :: [String] -> Expr -> [String]
+--    helper bv (Var x)
+--        | x `elem` bv = []
+--        | otherwise = [x]
+--    helper bv (e1 :@ e2) =
+--        helper bv e1 `union` helper bv e2
+--    helper bv (Lam x e) = helper (x : bv) e
+--    helper _ (Func _) = []
+--    helper bv (Constr _ args) = foldr union [] (map (helper bv) args)
+--
+--
+--instance Show Expr where
+--  show (Var x) = x
+--  show (Constr c xs) =
+--    let args = intercalate ", " $ map show xs in
+--    c ++ if null xs then args else Utils.surroundParens args
+--  show (Lam x e) = "lam " ++ x ++ ". " ++ show e
+--  show (Func f) = ":" ++ f
+--  show (e1 :@ e2) = Utils.surroundParens $ show e1 ++ " " ++ show e2
+--  show (Case e cases) = unwords
+--    ["case", show e, "of", intercalate " | " (map (\(p, ep) -> show p ++ " --> " ++ show ep) cases)]
+--
+--instance Show Pattern where
+--  show (Pattern c vars) = c ++ Utils.surroundParens (intercalate ", " vars)
