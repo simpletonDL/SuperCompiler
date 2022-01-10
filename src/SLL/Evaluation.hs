@@ -23,7 +23,7 @@ substAll sbs (G g gargs) = G g $ map (substAll sbs) gargs
 --substAll _ _ _ = error "Different var and term count"
 
 evalStep :: SLLProg -> Maybe Expr
-evalStep p = case decompose $ main p of
+evalStep p = case decompose $ mainExpr p of
   (DecObservable _) -> Nothing
   (DecRedex (ctx, redex)) -> case redex of
     RedexF f args -> case findFDef p f of
@@ -35,16 +35,14 @@ evalStep p = case decompose $ main p of
         let vars = consVars (pattern caseDef) ++ restVars caseDef in
         let args = cArgs ++ restArgs in
         let unfold = substAll (zip vars args) (body caseDef) in
---        let substConsArgs = substAll (zip (consVars $ pattern caseDef) cArgs) (body caseDef) in
---        let substRestArgs = substAll (zip (restVars caseDef) restArgs) substConsArgs in
         Just $ fillHole ctx unfold
       Nothing -> error $ "g-function " ++ g ++ " with pattern " ++ cName ++ " is not defined"
     RedexGFail _ _ _ -> error "gfail"
 
 eval :: SLLProg -> Expr
 eval p = case evalStep p of
-  Just e -> eval $ SLLProg { main = e, gDefs = gDefs p, fDefs = fDefs p }
-  Nothing -> main p
+  Just e -> eval $ SLLProg { mainExpr = e, gDefs = gDefs p, fDefs = fDefs p }
+  Nothing -> mainExpr p
 
 
 

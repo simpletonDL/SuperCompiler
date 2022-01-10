@@ -31,9 +31,10 @@ library
       SLL.Decomposition
       SLL.Evaluation
       SLL.Example
+      SLL.Generalization
       SLL.Lang
-      SLL.Lazy
       SLL.Namer
+      SLL.PartialProcessTree
       SLL.ProcessTree
       Utils
   other-modules:

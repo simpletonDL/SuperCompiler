@@ -38,13 +38,13 @@ appendCase1Expr :: Expr
 appendCase1Expr = append(append (V "xs", V "ys"), V "zs")
 
 appendCase1Prog :: SLLProg
-appendCase1Prog = SLLProg { main = appendCase1Expr, gDefs = [appendDef], fDefs = [] }
+appendCase1Prog = SLLProg { mainExpr = appendCase1Expr, gDefs = [appendDef], fDefs = [] }
 
 appendCase2Expr :: Expr
 appendCase2Expr = append(append (cons (V "x", V "xs"), V "ys"), V "zs")
 
 appendCase2Prog :: SLLProg
-appendCase2Prog = SLLProg { main = appendCase2Expr, gDefs = [appendDef], fDefs = [] }
+appendCase2Prog = SLLProg { mainExpr = appendCase2Expr, gDefs = [appendDef], fDefs = [] }
 
 -- f-functions
 z :: Expr

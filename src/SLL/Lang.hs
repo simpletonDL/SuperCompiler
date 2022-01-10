@@ -18,7 +18,7 @@ data Expr =
   | C CName [Expr]
   | F FName [Expr]
   | G GName [Expr] -- expr list not empty
-  deriving (Show, Eq)
+  deriving Eq
 
 class Named a where
   getName :: a -> String
@@ -47,7 +47,7 @@ data CaseDef = CaseDef {
 data Pattern = Pattern {
   consName :: CName,
   consVars :: [Var]
-} deriving (Eq, Show)
+} deriving Eq
 
 data GDef = GDef GName [CaseDef] -- g [(p1, v1, ..., vn) = e, ...]
   deriving (Eq, Show)
@@ -59,7 +59,7 @@ instance Named GDef where
   getName (GDef name _ ) = name
 
 data SLLProg = SLLProg {
-  main :: Expr,
+  mainExpr :: Expr,
   fDefs :: [FDef],
   gDefs :: [GDef]
 } deriving (Eq, Show)
@@ -78,3 +78,12 @@ findGDefAllCases p gName = fromMaybe [] $ do {
   GDef _ caseDefs <- find (\def -> getName def == gName) $ gDefs p;
   return $ caseDefs
 }
+
+instance Show Expr where
+  show (V v) = v
+  show (C c args) = c ++ "(" ++ intercalate ", " (map show args) ++ ")"
+  show (F f args) = f ++ "(" ++ intercalate ", " (map show args) ++ ")"
+  show (G g args) = g ++ "(" ++ intercalate ", " (map show args) ++ ")"
+
+instance Show Pattern where
+  show ptrn = consName ptrn ++ "(" ++ intercalate ", " (consVars ptrn) ++ ")"

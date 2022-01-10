@@ -13,13 +13,13 @@ data Redex =
   | RedexGFail GName Var [Expr] -- g(v, e1, ..., en)
   deriving (Show, Eq)
 
-data DecObservable =
+data Observable =
     ObsC CName [Expr]
   | ObsV Var
   deriving (Show, Eq)
 
 data Decomposition =
-    DecObservable DecObservable
+    DecObservable Observable
   | DecRedex (Context, Redex)
   deriving (Show, Eq)
 
