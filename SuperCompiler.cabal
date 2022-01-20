@@ -34,8 +34,9 @@ library
       SLL.Generalization
       SLL.Lang
       SLL.Namer
-      SLL.PartialProcessTree
-      SLL.ProcessTree
+      SLL.ProcessTree.Common
+      SLL.ProcessTree.PartialPTNode
+      SLL.ProcessTree.PTNode
       Utils
   other-modules:
       Paths_SuperCompiler

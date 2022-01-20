@@ -1,22 +1,27 @@
-module SLL.ProcessTree where
+module SLL.ProcessTree.PTNode where
 
 import SLL.Lang
 import SLL.Decomposition
 import SLL.Evaluation
 import SLL.Namer
 import Data.List
-
-data GCase = GCase {
-  gCaseVar :: Var,
-  gCasePtrn :: Pattern
-} deriving Eq
+import SLL.ProcessTree.Common
 
 data PTNode =
     PTCaseAnalysis Expr [(GCase, PTNode)]
   | PTCons CName Expr [PTNode]
   | PTVar Var
-  | PTLeaf Expr
+  | PTLeaf Expr -- only for prune tree
   deriving Eq
+
+class HasExpr a where
+  getExpr :: a -> Expr
+
+instance HasExpr PTNode where
+  getExpr (PTCaseAnalysis e _ ) = e
+  getExpr (PTCons _ e _) = e
+  getExpr (PTVar v) = V v
+  getExpr (PTLeaf e) = e
 
 patternToExpr :: Pattern -> Expr
 patternToExpr p = C (consName p) $ map V (consVars p)
@@ -63,8 +68,8 @@ pruneHelper depth maxDepth node =
       PTCons c e children -> PTCons c e $ map (pruneHelper (depth + 1) maxDepth) children
       leaf -> leaf
       
-prune :: Int -> PTNode -> PTNode
-prune depth = pruneHelper 0 depth
+prunePTNode :: Int -> PTNode -> PTNode
+prunePTNode depth = pruneHelper 0 depth
 
 -- append(append (xs, ys), zs)
 -- * xs = x0 : x1
@@ -80,20 +85,6 @@ prune depth = pruneHelper 0 depth
 --    * ys = x0 : x1
 --       append (x0 : x1, zs)
 --       x0 : append(x1, zs)
-         
-
---x = CaseAnalysis (G "app" [G "app" [V "xs",V "ys"],V "zs"])
---    [(GCase {gCaseVar = "xs", gCasePtrn = Pattern {consName = "Nil", consVars = []}},
---      CaseAnalysis (G "app" [V "ys",V "zs"])
---         [(GCase {gCaseVar = "ys", gCasePtrn = Pattern {consName = "Nil", consVars = []}},
---           Leaf (V "zs")),
---
---          (GCase {gCaseVar = "ys", gCasePtrn = Pattern {consName = "Cons", consVars = ["x0","x1"]}},
---           Leaf (C "Cons" [V "x0",G "app" [V "x1",V "zs"]]))]),
---
---     (GCase {gCaseVar = "xs", gCasePtrn = Pattern {consName = "Cons", consVars = ["x0","x1"]}},
---      Leaf (C "Cons" [V "x0",G "app" [G "app" [V "x1",V "ys"],V "zs"]]))]
-
 
 -- Printer
 makeIndent :: Int -> String -> String
